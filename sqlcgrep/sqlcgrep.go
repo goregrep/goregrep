@@ -29,7 +29,7 @@ func New(yml []byte, opts ...Option) error {
 	}
 
 	for _, pkg := range cfg.Packages {
-		for _, replace := range pkg.Replaces {
+		for _, replace := range pkg.Regenerates {
 			f, err := os.OpenFile(filepath.Join(cfg.directory, replace.File), os.O_RDWR, os.ModePerm)
 			if os.IsNotExist(err) {
 				fmt.Fprintf(os.Stderr, "File %q not exist.\n", replace.File)
@@ -39,10 +39,10 @@ func New(yml []byte, opts ...Option) error {
 				return fmt.Errorf("regexp compile: %w", err)
 			}
 
-			var replaces []regenerate.Option
+			var regenerates []regenerate.Option
 
 			for _, rep := range replace.Strings {
-				replaces = append(replaces,
+				regenerates = append(regenerates,
 					regenerate.ReplaceString(rep.Match, rep.Replacement),
 				)
 			}
@@ -53,16 +53,16 @@ func New(yml []byte, opts ...Option) error {
 					return fmt.Errorf("regexp compile: %w", err)
 				}
 
-				replaces = append(replaces,
+				regenerates = append(regenerates,
 					regenerate.ReplaceRegexp(re, rep.Replacement),
 				)
 			}
 
 			if cfg.gofmt != nil {
-				replaces = append(replaces, regenerate.WithGofmt(cfg.gofmt))
+				regenerates = append(regenerates, regenerate.WithGofmt(cfg.gofmt))
 			}
 
-			err = regenerate.Pipe(f, f, replaces...)
+			err = regenerate.Pipe(f, f, regenerates...)
 			if err != nil {
 				return fmt.Errorf("regenerate pipe: %s", err)
 			}
@@ -79,7 +79,7 @@ type Configuration struct {
 }
 
 type Package struct {
-	Replaces []Replace `yaml:"replaces"`
+	Regenerates []Replace `yaml:"regenerates"`
 }
 
 type Replace struct {
