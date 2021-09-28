@@ -29,7 +29,7 @@ func main() {
 
 var CLI struct {
 	Regenerate struct {
-		File string `default:"sqlc.yaml" help:"Specify an alternate config file (default: sqlc.yaml)."`
+		File string `default:"sqlcgrep.yaml" help:"Specify an alternate config file (default: sqlc.yaml)."`
 	} `cmd:"" help:"Replace generated code."`
 }
 
