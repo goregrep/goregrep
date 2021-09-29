@@ -7,6 +7,7 @@ package sqlcgrep
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -16,22 +17,31 @@ import (
 	"golang.org/x/tools/imports"
 )
 
-func New(yml []byte, opts ...Option) error {
+func New(yml io.Reader, opts ...Option) error {
 	var cfg Configuration
-
-	err := yaml.Unmarshal(yml, &cfg)
-	if err != nil {
-		return fmt.Errorf("unmarshal yaml: %w", err)
-	}
 
 	for _, opt := range opts {
 		opt(&cfg)
+	}
+
+	var yamlOptions []yaml.DecodeOption
+
+	if len(cfg.references) != 0 {
+		yamlOptions = append(yamlOptions, yaml.ReferenceReaders(cfg.references...))
+	}
+
+	dec := yaml.NewDecoder(yml, yamlOptions...)
+
+	err := dec.Decode(&cfg)
+	if err != nil {
+		return fmt.Errorf("decode yaml: %w", err)
 	}
 
 	for _, reg := range cfg.Regenerates {
 		f, err := os.OpenFile(filepath.Join(cfg.directory, reg.File), os.O_RDWR, os.ModePerm)
 		if os.IsNotExist(err) {
 			fmt.Fprintf(os.Stderr, "File %q not exist.\n", reg.File)
+
 			continue
 
 		} else if err != nil {
@@ -73,6 +83,7 @@ func New(yml []byte, opts ...Option) error {
 type Configuration struct {
 	Regenerates []Regenerate `yaml:"regenerates"`
 	directory   string
+	references  []io.Reader
 	gofmt       *imports.Options
 }
 
@@ -101,9 +112,20 @@ type Option func(*Configuration)
 
 // WithDirectory sets directory.
 func WithDirectory(dir string) Option {
-	return func(c *Configuration) { c.directory = dir }
+	return func(c *Configuration) {
+		c.directory = dir
+	}
+}
+
+// WithReferences setes reference to anchor defined by passed readers.
+func WithReferences(refs ...io.Reader) Option {
+	return func(c *Configuration) {
+		c.references = append(c.references, refs...)
+	}
 }
 
 func WithGofmt(opts *imports.Options) Option {
-	return func(c *Configuration) { c.gofmt = opts }
+	return func(c *Configuration) {
+		c.gofmt = opts
+	}
 }

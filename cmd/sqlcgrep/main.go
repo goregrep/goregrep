@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/alecthomas/kong"
@@ -15,7 +14,7 @@ func main() {
 
 	switch cmd.Command() {
 	case "regenerate":
-		err := grep(CLI.Regenerate.File)
+		err := grep(CLI.Regenerate.File, CLI.Regenerate.References)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%s\n", err)
 			os.Exit(1)
@@ -29,17 +28,27 @@ func main() {
 
 var CLI struct {
 	Regenerate struct {
-		File string `default:"sqlcgrep.yaml" help:"Specify an alternate config file (default: sqlc.yaml)."`
+		File       string   `default:"sqlcgrep.yaml" help:"Specify an alternate YAML file."`
+		References []string `default:"sqlcgrep_reference.yaml" help:"Specify YAML references."`
 	} `cmd:"" help:"Replace generated code."`
 }
 
-func grep(pth string) error {
-	yml, err := ioutil.ReadFile(pth)
+func grep(pth string, refs []string) error {
+	yml, err := os.Open(pth)
 	if err != nil {
 		return err
 	}
 
 	var opts []sqlcgrep.Option
+
+	for _, pth := range refs {
+		yml, err := os.Open(pth)
+		if err != nil {
+			return err
+		}
+
+		opts = append(opts, sqlcgrep.WithReferences(yml))
+	}
 
 	dir, err := os.Getwd()
 	if err != nil {
