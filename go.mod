@@ -1,4 +1,4 @@
-module github.com/danil/goregrep
+module github.com/goregrep/goregrep
 
 go 1.16
 

@@ -12,9 +12,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/danil/goregrep/internal/testline"
-	"github.com/danil/goregrep/regenerate"
 	"github.com/google/go-cmp/cmp"
+	"github.com/goregrep/goregrep/internal/testline"
+	"github.com/goregrep/goregrep/regenerate"
 	"golang.org/x/tools/imports"
 )
 

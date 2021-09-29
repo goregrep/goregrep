@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/alecthomas/kong"
-	"github.com/danil/goregrep/goregrep"
+	"github.com/goregrep/goregrep/goregrep"
 	"golang.org/x/tools/imports"
 )
 

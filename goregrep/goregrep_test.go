@@ -13,9 +13,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/danil/goregrep/goregrep"
-	"github.com/danil/goregrep/internal/testline"
 	"github.com/google/go-cmp/cmp"
+	"github.com/goregrep/goregrep/goregrep"
+	"github.com/goregrep/goregrep/internal/testline"
 	"golang.org/x/tools/imports"
 )
 

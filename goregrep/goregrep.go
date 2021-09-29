@@ -12,8 +12,8 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/danil/goregrep/regenerate"
 	"github.com/goccy/go-yaml"
+	"github.com/goregrep/goregrep/regenerate"
 	"golang.org/x/tools/imports"
 )
 
