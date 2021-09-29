@@ -8,7 +8,6 @@ package goregrep
 import (
 	"fmt"
 	"io"
-	"os"
 	"path/filepath"
 	"regexp"
 
@@ -38,16 +37,6 @@ func New(yml io.Reader, opts ...Option) error {
 	}
 
 	for _, reg := range cfg.Regenerates {
-		f, err := os.OpenFile(filepath.Join(cfg.directory, reg.File), os.O_RDWR, os.ModePerm)
-		if os.IsNotExist(err) {
-			fmt.Fprintf(os.Stderr, "File %q not exist.\n", reg.File)
-
-			continue
-
-		} else if err != nil {
-			return fmt.Errorf("os open file: %w", err)
-		}
-
 		var regenerates []regenerate.Option
 
 		for _, rep := range reg.Replace.Strings {
@@ -71,7 +60,7 @@ func New(yml io.Reader, opts ...Option) error {
 			regenerates = append(regenerates, regenerate.WithGofmt(cfg.gofmt))
 		}
 
-		err = regenerate.Pipe(f, f, regenerates...)
+		err = regenerate.Glob(filepath.Join(cfg.directory, reg.File), regenerates...)
 		if err != nil {
 			return fmt.Errorf("regenerate pipe: %s", err)
 		}
