@@ -45,7 +45,7 @@ func New(yml io.Reader, opts ...Option) error {
 			continue
 
 		} else if err != nil {
-			return fmt.Errorf("regexp compile: %w", err)
+			return fmt.Errorf("os open file: %w", err)
 		}
 
 		var regenerates []regenerate.Option
