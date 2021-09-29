@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 )
 
-func Regenerate(pattern string, opts ...Option) error {
+func Glob(pattern string, opts ...Option) error {
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
 		return fmt.Errorf("file path glob: %w", err)
