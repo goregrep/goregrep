@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package sqlcgrep provides functionality for replace/regenerate sqlc code.
-package sqlcgrep
+// Package goregrep provides functionality for replace (regenerate) generated code.
+package goregrep
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/danil/ggrep/regenerate"
+	"github.com/danil/goregrep/regenerate"
 	"github.com/goccy/go-yaml"
 	"golang.org/x/tools/imports"
 )

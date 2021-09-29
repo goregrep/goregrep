@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/alecthomas/kong"
-	"github.com/danil/ggrep/sqlcgrep"
+	"github.com/danil/goregrep/goregrep"
 	"golang.org/x/tools/imports"
 )
 
@@ -28,7 +28,7 @@ func main() {
 
 var CLI struct {
 	Regenerate struct {
-		File       string   `default:"sqlcgrep.yaml" help:"Specify an alternate YAML file."`
+		File       string   `default:"goregrep.yaml" help:"Specify an alternate YAML file."`
 		References []string `help:"Specify YAML references."`
 	} `cmd:"" help:"Replace generated code."`
 }
@@ -39,7 +39,7 @@ func grep(pth string, refs []string) error {
 		return err
 	}
 
-	var opts []sqlcgrep.Option
+	var opts []goregrep.Option
 
 	for _, pth := range refs {
 		yml, err := os.Open(pth)
@@ -47,7 +47,7 @@ func grep(pth string, refs []string) error {
 			return err
 		}
 
-		opts = append(opts, sqlcgrep.WithReferences(yml))
+		opts = append(opts, goregrep.WithReferences(yml))
 	}
 
 	dir, err := os.Getwd()
@@ -55,7 +55,7 @@ func grep(pth string, refs []string) error {
 		return fmt.Errorf("os: get current/working directory: %w", err)
 	}
 
-	opts = append(opts, sqlcgrep.WithDirectory(dir))
+	opts = append(opts, goregrep.WithDirectory(dir))
 
 	gofmt := imports.Options{
 		Fragment:  true,
@@ -64,9 +64,9 @@ func grep(pth string, refs []string) error {
 		TabWidth:  8,
 	}
 
-	opts = append(opts, sqlcgrep.WithGofmt(&gofmt))
+	opts = append(opts, goregrep.WithGofmt(&gofmt))
 
-	err = sqlcgrep.New(yml, opts...)
+	err = goregrep.New(yml, opts...)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err)
 		os.Exit(1)
