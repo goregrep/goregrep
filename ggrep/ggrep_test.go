@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package goregrep_test
+package ggrep_test
 
 import (
 	_ "embed"
@@ -14,7 +14,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/goregrep/goregrep/goregrep"
+	"github.com/goregrep/goregrep/ggrep"
 	"github.com/goregrep/goregrep/internal/testline"
 	"golang.org/x/tools/imports"
 )
@@ -181,10 +181,10 @@ func (q *Queries) CountFoos(ctx context.Context) (int64, error) {
 				refs = append(refs, strings.NewReader(ref))
 			}
 
-			var opts []goregrep.Option
+			var opts []ggrep.Option
 
-			opts = append(opts, goregrep.WithReferences(refs...))
-			opts = append(opts, goregrep.WithDirectory(dir))
+			opts = append(opts, ggrep.WithReferences(refs...))
+			opts = append(opts, ggrep.WithDirectory(dir))
 
 			gofmt := imports.Options{
 				Fragment:  true,
@@ -193,9 +193,9 @@ func (q *Queries) CountFoos(ctx context.Context) (int64, error) {
 				TabWidth:  8,
 			}
 
-			opts = append(opts, goregrep.WithGofmt(&gofmt))
+			opts = append(opts, ggrep.WithGofmt(&gofmt))
 
-			err = goregrep.New(yml, opts...)
+			err = ggrep.New(yml, opts...)
 			if err != nil {
 				t.Fatalf("\ngoregrep new/%s\nerror: %s", tt.line, err)
 			}

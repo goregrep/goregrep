@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/alecthomas/kong"
-	"github.com/goregrep/goregrep/goregrep"
+	"github.com/goregrep/goregrep/ggrep"
 	"golang.org/x/tools/imports"
 )
 
@@ -39,7 +39,7 @@ func grep(pth string, refs []string) error {
 		return err
 	}
 
-	var opts []goregrep.Option
+	var opts []ggrep.Option
 
 	for _, pth := range refs {
 		yml, err := os.Open(pth)
@@ -47,7 +47,7 @@ func grep(pth string, refs []string) error {
 			return err
 		}
 
-		opts = append(opts, goregrep.WithReferences(yml))
+		opts = append(opts, ggrep.WithReferences(yml))
 	}
 
 	dir, err := os.Getwd()
@@ -55,7 +55,7 @@ func grep(pth string, refs []string) error {
 		return fmt.Errorf("os: get current/working directory: %w", err)
 	}
 
-	opts = append(opts, goregrep.WithDirectory(dir))
+	opts = append(opts, ggrep.WithDirectory(dir))
 
 	gofmt := imports.Options{
 		Fragment:  true,
@@ -64,9 +64,9 @@ func grep(pth string, refs []string) error {
 		TabWidth:  8,
 	}
 
-	opts = append(opts, goregrep.WithGofmt(&gofmt))
+	opts = append(opts, ggrep.WithGofmt(&gofmt))
 
-	err = goregrep.New(yml, opts...)
+	err = ggrep.New(yml, opts...)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err)
 		os.Exit(1)
